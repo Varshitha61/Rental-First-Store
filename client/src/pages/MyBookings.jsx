@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Calendar, ShieldAlert, Sparkles, AlertCircle, CheckCircle2, RotateCcw, Clock } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 
 export default function MyBookings() {
   const { user, token, isAuthenticated } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
   const [bookings, setBookings] = useState([]);
@@ -63,8 +65,10 @@ export default function MyBookings() {
       setBookings((prev) =>
         prev.map((b) => (b._id === bookingId ? { ...b, status: "returned" } : b))
       );
+      showToast("Rental returned successfully!", "success");
     } catch (err) {
       setReturnError(err.message);
+      showToast(err.message || "Failed to return rental", "error");
     } finally {
       setReturningId(null);
     }

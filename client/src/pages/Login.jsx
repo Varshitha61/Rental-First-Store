@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Lock, Mail, User, AlertCircle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 
 export default function Login() {
   const { login, register, isAuthenticated } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -36,12 +38,15 @@ export default function Login() {
     try {
       if (isLoginMode) {
         await login(email, password);
+        showToast("Logged in successfully!", "success");
       } else {
         await register(name, email, password);
+        showToast("Account created successfully!", "success");
       }
       navigate(redirectUrl);
     } catch (err) {
       setError(err.message || "An authentication error occurred");
+      showToast(err.message || "Authentication failed", "error");
     } finally {
       setSubmitting(false);
     }

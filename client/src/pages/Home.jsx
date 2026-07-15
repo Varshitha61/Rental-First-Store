@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Search, SlidersHorizontal, Tag, DollarSign, Calendar, Sparkles } from "lucide-react";
+import { useToast } from "../context/ToastContext";
 
 export default function Home() {
+  const { showToast } = useToast();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,9 +22,12 @@ export default function Home() {
         return res.json();
       })
       .then((data) => setProducts(data))
-      .catch((err) => setError(err.message))
+      .catch((err) => {
+        setError(err.message);
+        showToast(err.message || "Failed to load products", "error");
+      })
       .finally(() => setLoading(false));
-  }, []);
+  }, [showToast]);
 
   // Filter logic
   const filteredProducts = products.filter((product) => {

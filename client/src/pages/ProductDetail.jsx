@@ -4,10 +4,12 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ArrowLeft, ShieldCheck, Zap, Calendar, AlertCircle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 
 export default function ProductDetail() {
   const { id } = useParams();
   const { token, isAuthenticated } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
   const [product, setProduct] = useState(null);
@@ -100,9 +102,11 @@ export default function ProductDetail() {
       }
 
       setBookingSuccess(true);
+      showToast("Gear reserved successfully!", "success");
       setTimeout(() => navigate("/bookings"), 2000);
     } catch (err) {
       setBookingError(err.message || "Something went wrong while placing booking.");
+      showToast(err.message || "Reservation failed", "error");
     } finally {
       setSubmitting(false);
     }
