@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Booking = require("../models/Booking");
 const Product = require("../models/Product");
 const { calculateRentalPrice } = require("../utils/bookingUtils");
+const authMiddleware = require("../middleware/auth");
 
 // Helper to check valid MongoDB ObjectID
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
@@ -12,14 +13,15 @@ const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
  * Creates a new booking.
  * Calculates totalPrice server-side, validates dates, and checks for overlaps.
  */
-router.post("/", async (req, res, next) => {
+router.post("/", authMiddleware, async (req, res, next) => {
   try {
-    const { productId, userId, startDate, endDate } = req.body;
+    const { productId, startDate, endDate } = req.body;
+    const userId = req.user.userId;
 
     // 1. Basic validation
-    if (!productId || !userId || !startDate || !endDate) {
+    if (!productId || !startDate || !endDate) {
       return res.status(400).json({
-        error: "productId, userId, startDate, and endDate are required fields.",
+        error: "productId, startDate, and endDate are required fields.",
       });
     }
 
@@ -100,11 +102,13 @@ router.post("/", async (req, res, next) => {
  * GET /api/bookings/:userId
  * List all bookings for a specific user, populating the product details.
  */
-router.get("/:userId", async (req, res, next) => {
+router.get("/:userId", authMiddleware, async (req, res, next) => {
   try {
     const { userId } = req.params;
-    if (!userId) {
-      return res.status(400).json({ error: "User ID is required." });
+
+    // Prevent users from accessing other users' booking information
+    if (req.user.userId !== userId) {
+      return res.status(403).json({ error: "Access denied. You can only view your own bookings." });
     }
 
     const bookings = await Booking.find({ userId })
