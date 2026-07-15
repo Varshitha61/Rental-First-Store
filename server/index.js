@@ -17,6 +17,7 @@ connectDB();
 app.use("/api", require("./routes/health"));
 app.use("/api/products", require("./routes/products"));
 app.use("/api/bookings", require("./routes/bookings"));
+app.use("/api/auth", require("./routes/auth"));
 
 // ── 404 catch-all ─────────────────────────────────────────────────────────────
 app.use((req, res) => {
