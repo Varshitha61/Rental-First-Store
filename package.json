@@ -1,0 +1,14 @@
+{
+  "name": "borrow",
+  "version": "1.0.0",
+  "description": "Borrow — rent anything, own nothing. Monorepo root.",
+  "private": true,
+  "scripts": {
+    "server": "npm run dev --prefix server",
+    "client": "npm run dev --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
