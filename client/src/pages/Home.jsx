@@ -161,7 +161,7 @@ export default function Home() {
                 </div>
 
                 <Link
-                  to={`/products/${product._id}`}
+                  to={`/product/${product._id}`}
                   className="px-4 py-2.5 bg-neutral-850 hover:bg-violet-600 hover:text-white border border-neutral-800 hover:border-violet-600 text-neutral-300 text-xs font-bold rounded-xl transition-all shadow"
                 >
                   Rent Now

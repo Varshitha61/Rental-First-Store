@@ -17,7 +17,7 @@ export default function App() {
         <main className="flex-grow py-8">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/products/:id" element={<ProductDetail />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/bookings" element={<MyBookings />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/login" element={<Login />} />
