@@ -1,21 +1,10 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("borrow_user");
-    const storedToken = localStorage.getItem("borrow_token");
-    if (storedUser && storedToken) {
-      setUser(JSON.parse(storedUser));
-      setToken(storedToken);
-    }
-    setLoading(false);
-  }, []);
 
   const login = async (email, password) => {
     const res = await fetch("/api/auth/login", {
@@ -29,10 +18,9 @@ export function AuthProvider({ children }) {
       throw new Error(data.error || "Login failed");
     }
 
+    // Save strictly in memory (React State)
     setUser(data.user);
     setToken(data.token);
-    localStorage.setItem("borrow_user", JSON.stringify(data.user));
-    localStorage.setItem("borrow_token", data.token);
     return data.user;
   };
 
@@ -48,23 +36,20 @@ export function AuthProvider({ children }) {
       throw new Error(data.error || "Registration failed");
     }
 
+    // Save strictly in memory (React State)
     setUser(data.user);
     setToken(data.token);
-    localStorage.setItem("borrow_user", JSON.stringify(data.user));
-    localStorage.setItem("borrow_token", data.token);
     return data.user;
   };
 
   const logout = () => {
     setUser(null);
     setToken(null);
-    localStorage.removeItem("borrow_user");
-    localStorage.removeItem("borrow_token");
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, isAuthenticated: !!token, login, register, logout, loading }}>
-      {!loading && children}
+    <AuthContext.Provider value={{ user, token, isAuthenticated: !!token, login, register, logout }}>
+      {children}
     </AuthContext.Provider>
   );
 }
